@@ -179,7 +179,31 @@ while(it.hasNext()){
 
 map  双列集合
 
+异常：Exception, java.lang包下，成为异常类，它表示程序本身可以处理的问题。
 
+RuntimeException及其子类：运行时异常
 
+其他：编译时异常
 
+处理：
+
+![image-20220714150556144](javaSE.assets/image-20220714150556144.png)
+
+![image-20220714150848339](javaSE.assets/image-20220714150848339.png)
+
+文件：File类在包Java.io.File下，代表操作系统的为你文件对象
+
+![image-20220714155808044](javaSE.assets/image-20220714155808044.png)
+
+![image-20220714155913295](javaSE.assets/image-20220714155913295.png)
+
+单元测试
+
+![image-20220720092701669](javaSE.assets/image-20220720092701669.png)
+
+反射
+
+![image-20220720095335520](javaSE.assets/image-20220720095335520.png)
+
+注解
 
