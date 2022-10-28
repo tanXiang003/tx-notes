@@ -94,5 +94,27 @@ InnoDB是基于磁盘存储的，由于磁盘速度和CPU速度相差很大，�
 
 内存堆。在对一些数据结构本身的内存进行分配时，需要从额外的内存池中申请。
 
+### 2.4 checkpoint技术
 
+解决几个问题：
+
+- 缩短数据库的恢复时间
+- 缓冲池不够用时，将脏页刷新到磁盘；
+- 重做日志不可用时，刷新脏页
+
+两种checkpoint：
+
+- sharp checkpoint，数据库关闭时将所有的脏页刷新回磁盘
+- Fuzzy checkpoint，数据库运行时使用
+
+Fuzzy checkpoint常用集中：
+
+- Master Thread Checkpoint
+- FLUSH_LRU_LIST checkpoint
+- Async/Sync Flush Checkpoint
+- Dirty Page too much Checkpoint
+
+### 2.5 Master Thread 工作方式
+
+//书
 
