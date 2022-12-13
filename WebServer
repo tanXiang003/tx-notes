@@ -1,0 +1,131 @@
+## 单例模式
+
+懒汉模式，但是线程不安全
+
+```cpp
+class single{
+ private:
+     //私有静态指针变量指向唯一实例
+     static single *p;
+
+     //私有化构造函数
+    single(){}
+    ~single(){}
+
+public:
+    //公有静态方法获取实例
+    static single* getinstance();
+
+};
+
+single* single::p = NULL;
+single* single::getinstance(){
+    if (NULL == p){
+            p = new single;
+    }
+    return p;
+}
+```
+
+可能有很多个线程同时判断`NULL == p`，然后同时`new`很多个实例。
+
+以下是线程安全的懒汉模式：
+
+```cpp
+class single{
+ private:
+     //私有静态指针变量指向唯一实例
+     static single *p;
+ 
+     //静态锁，是由于静态函数只能访问静态成员
+     static pthread_mutex_t lock;
+ 
+     //私有化构造函数
+    single(){
+        pthread_mutex_init(&lock, NULL);
+    }
+    ~single(){}
+
+public:
+    //公有静态方法获取实例
+    static single* getinstance();
+
+};
+
+pthread_mutex_t single::lock;
+
+single* single::p = NULL;
+single* single::getinstance(){
+    if (NULL == p){
+        pthread_mutex_lock(&lock);
+        if (NULL == p){
+            p = new single;
+        }
+        pthread_mutex_unlock(&lock);
+    }
+    return p;
+}
+```
+
+双重加锁检测的好处：
+
+如果只检测一次，在每次调用获取实例的方法时，都需要加锁，这将严重影响程序性能。双层检测可以有效避免这种情况，仅在第一次创建单例的时候加锁，其他时候都不再符合NULL == p的情况，直接返回已创建好的实例。
+
+局部静态变量之线程安全懒汉模式：
+
+《Effective C++》（Item 04）中的提出另一种更优雅的单例模式实现，使用函数内的局部静态对象，这种方法不用加锁和解锁操作。
+
+```cpp
+class single{
+private:
+    single(){}
+    ~single(){}
+
+public:
+    static single* getinstance();
+
+};
+
+single* single::getinstance(){
+    static single obj;
+    return &obj;
+}
+只适合C++11标准
+```
+
+
+
+饿汉模式：程序运行时就定义对象，并对其初始化。
+
+```cpp
+class single{
+ private:
+     static single* p;
+     single(){}
+     ~single(){}
+ 
+public:
+     static single* getinstance();
+ 
+};
+single* single::p = new single();
+single* single::getinstance(){
+    return p;
+}
+
+//测试方法
+int main(){
+
+    single *p1 = single::getinstance();
+    single *p2 = single::getinstance();
+
+    if (p1 == p2)
+        cout << "same" << endl;
+
+    system("pause");
+    return 0;
+}
+```
+
+饿汉模式的问题：在于非静态对象（函数外的static对象）在不同编译单元中的初始化顺序是未定义的。如果在初始化完成之前调用 getInstance() 方法会返回一个未定义的实例。
+
